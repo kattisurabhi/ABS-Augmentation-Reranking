@@ -24,4 +24,4 @@ torchvision
 tornado==6.1
 tqdm==4.62.3
 transformers==4.32.0
-tensorflow
+tensorflow==4.33.1
