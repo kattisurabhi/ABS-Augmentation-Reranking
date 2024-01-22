@@ -18,7 +18,7 @@ tensorboard-plugin-wit
 tensorflow-estimator
 jedi>=0.16
 tensorflow-io-gcs-filesystem==0.23.1
-tokenizers
+tokenizers==0.13.3
 torchaudio
 torchvision
 tornado==6.1
