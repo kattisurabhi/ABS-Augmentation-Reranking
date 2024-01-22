@@ -6,7 +6,6 @@ from tqdm import tqdm
 import nltk
 import os
 import argparse
-#from torch.utils.data import Dataset
 from datasets import Dataset, load_dataset
 from torch.utils.data import DataLoader
 import numpy as np
@@ -17,6 +16,7 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 from copy import copy
 import math
+nltk.download('punkt')
 
 def main():
     def mask_input_np(org_document, ratio=0.5, is_bart=True):
