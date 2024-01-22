@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, '/home/data')
 import pickle
 from copy import copy
 from transformers import T5Tokenizer, T5ForConditionalGeneration, default_data_collator, PegasusForConditionalGeneration, AutoTokenizer
