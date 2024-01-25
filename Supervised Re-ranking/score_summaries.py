@@ -12,10 +12,10 @@ from nltk.tokenize import sent_tokenize
 from tqdm import tqdm
 from rouge_score import rouge_scorer
 from datasets import load_metric
+from common.bart_score import BARTScorer
 from bert_score import score as bertscore_score
 
 from common.utils import *
-from common.bart_score import BARTScorer
 from common.evaluation import overall_eval
 
 
@@ -35,14 +35,10 @@ parser.add_argument('--val_size', type = int, default = -1)
 
 # model
 parser.add_argument('--model_name', type = str, default = "bart_cnndm",
-                    choices = ["pegasus_unsupervised", "bart_unsupervised",
-                    "pegasus_cnndm_first_half_shuffled_1", "pegasus_cnndm_second_half_shuffled_1", "pegasus_cnndm", 
-                    "bart_cnndm_first_half_shuffled_1", "bart_cnndm_second_half_shuffled_1", "bart_cnndm",
-                    "pegasus_xsum_first_half_shuffled_1", "pegasus_xsum_second_half_shuffled_1", "pegasus_xsum", 
-                    "bart_xsum_first_half_shuffled_1", "bart_xsum_second_half_shuffled_1", "bart_xsum", 
-                    "pegasus_reddit_first_half_shuffled_1", "pegasus_reddit_second_half_shuffled_1", "pegasus_reddit_train_1", 
-                    "bart_reddit_first_half_shuffled_1", "bart_reddit_second_half_shuffled_1", "bart_reddit"])
-parser.add_argument('--num_candidates', type = int, default = 15)
+                    choices = [ 
+                    "bart_cnndm_first_half_shuffled_1", "bart_cnndm_second_half_shuffled_1", "bart_cnndm"
+                    ])
+parser.add_argument('--num_candidates', type = int, default = 8)
 
 # METRIC
 parser.add_argument('--label_metric', type = str, default = "rouge_1",
@@ -65,11 +61,11 @@ parser.add_argument('--eval_rouge_text', type = bool, default = False)
 
 args = parser.parse_args()
 
-dataset_names = ["cnndm", "xsum", "reddit"]
-highlights = [True, False, False]
-val_data_sizes = [13368, 11332, 4213]
-test_data_sizes = [11490, 11334, 4222]
-clean_ns = [True, False, False]
+dataset_names = ["cnndm"]
+highlights = [True]
+val_data_sizes = [13368]
+test_data_sizes = [11490]
+clean_ns = [True]
 
 idx = dataset_names.index(args.dataset)
 
