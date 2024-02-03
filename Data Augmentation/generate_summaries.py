@@ -143,7 +143,7 @@ def main():
     parser.add_argument("--mask_ratio1", default=0.0, type=float)
     parser.add_argument("--mask_ratio2", default=0.0, type=float)
     parser.add_argument("--mask_type", default='np', type=str)
-    parser.add_argument("--odd_even", default='odd', type=str)
+    parser.add_argument("--odd_even", default='all', type=str)
     parser.add_argument("--num_return_sequences", default=1, type=int)
     parser.add_argument("--diversity_penalty", default=0.1, type=float)
     parser.add_argument("--num_beam_groups", default=8, type=int)
@@ -239,13 +239,9 @@ def main():
           filled_summaries_output.append(sublist)
         return filled_summaries_output
     all_outputs = []
-    # all_outputs_2 = []
-    # all_outputs_3 = []
-    # all_outputs_4 = []
+  
     filled_summaries = []
-    # filled_summaries_2 = []
-    # filled_summaries_3 = []
-    # filled_summaries_4 = []
+    
     input_articles = []
     filled_input = []
     for batch in tqdm(dataloader):
@@ -254,24 +250,12 @@ def main():
                                         , max_length=args.tgt_max_length, num_beams=num_beams, diversity_penalty=args.diversity_penalty
                                      , num_return_sequences=args.num_return_sequences, num_beam_groups=args.num_beam_groups).cpu()
             
-            # outputs_2 = model.generate(input_ids=batch['input_ids'], attention_mask=batch['attention_mask']
-            #                             , max_length=args.tgt_max_length, num_beams=num_beams).cpu()
-            
-            # outputs_3 = model.generate(input_ids=batch['input_ids'], attention_mask=batch['attention_mask']
-            #                             , max_length=args.tgt_max_length, num_beams=num_beams).cpu()
-            
-            # outputs_4 = model.generate(input_ids=batch['input_ids'], attention_mask=batch['attention_mask']
-            #                             , max_length=args.tgt_max_length, num_beams=num_beams).cpu()
-            
+        
             all_outputs += list(outputs)
-            # all_outputs_2 += list(outputs_2)
-            # all_outputs_3 += list(outputs_3)
-            # all_outputs_4 += list(outputs_4)
+           
             
             filled_summaries += tokenizer.batch_decode(list(outputs), skip_special_tokens=False)
-            # filled_summaries_2 += tokenizer.batch_decode(list(outputs_2), skip_special_tokens=False)
-            # filled_summaries_3 += tokenizer.batch_decode(list(outputs_3), skip_special_tokens=False)
-            # filled_summaries_4 += tokenizer.batch_decode(list(outputs_4), skip_special_tokens=False)
+          
             
             input_articles += tokenizer.batch_decode(batch['input_ids'], skip_special_tokens=False)
             #print(input_articles)
