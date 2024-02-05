@@ -43,9 +43,9 @@ def base_setting(args):
     args.max_lr = getattr(args, "max_lr", 2e-3)
     args.scale = getattr(args, "scale", 1)
     args.datatype = getattr(args, "datatype", "diverse")
-    args.dataset = getattr(args, "dataset", "xsum")
-    args.max_len = getattr(args, "max_len", 120)  # 120 for cnndm and 80 for xsum
-    args.max_num = getattr(args, "max_num", 16)
+    args.dataset = getattr(args, "dataset", "cnndm")
+    args.max_len = getattr(args, "max_len", 120)  
+    args.max_num = getattr(args, "max_num", 8)
     args.cand_weight = getattr(args, "cand_weight", 1)
     args.gold_weight = getattr(args, "gold_weight", 1)
 
@@ -85,7 +85,7 @@ def evaluation(args):
                 to_cuda(batch, args.gpuid[0])
             samples = batch["data"]
             output = scorer(batch["src_input_ids"], batch["candidate_ids"])
-            similarity, gold_similarity = output['score'], output['summary_score']
+            similarity = output['score']
             similarity = similarity.cpu().numpy()
             if i % 100 == 0:
                 print(f"test similarity: {similarity[0]}")
