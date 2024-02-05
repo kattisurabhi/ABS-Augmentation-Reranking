@@ -22,7 +22,6 @@ def RankingLoss(score, summary_score=None, margin=0, gold_margin=0, gold_weight=
             TotalLoss += loss
     if no_gold:
         return TotalLoss
-    # gold summary loss
     pos_score = summary_score.unsqueeze(-1).expand_as(score)
     neg_score = score
     pos_score = pos_score.contiguous().view(-1)
@@ -48,7 +47,6 @@ class ReRanker(nn.Module):
         doc_emb = out[:, 0, :]
         
         if require_gold:
-            # get reference score
             input_mask = summary_id != self.pad_token_id
             out = self.encoder(summary_id, attention_mask=input_mask)[0]
             summary_emb = out[:, 0, :]
@@ -59,8 +57,6 @@ class ReRanker(nn.Module):
         input_mask = candidate_id != self.pad_token_id
         out = self.encoder(candidate_id, attention_mask=input_mask)[0]
         candidate_emb = out[:, 0, :].view(batch_size, candidate_num, -1)
-        
-        # get candidate score
         doc_emb = doc_emb.unsqueeze(1).expand_as(candidate_emb)
         score = torch.cosine_similarity(candidate_emb, doc_emb, dim=-1)
 
