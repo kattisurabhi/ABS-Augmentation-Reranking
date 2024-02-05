@@ -84,7 +84,7 @@ def evaluation(args):
             if args.cuda:
                 to_cuda(batch, args.gpuid[0])
             samples = batch["data"]
-            output = scorer(batch["src_input_ids"], batch["candidate_ids"], batch["tgt_input_ids"])
+            output = scorer(batch["src_input_ids"], batch["candidate_ids"])
             similarity, gold_similarity = output['score'], output['summary_score']
             similarity = similarity.cpu().numpy()
             if i % 100 == 0:
@@ -113,43 +113,6 @@ def evaluation(args):
     print("rouge1: %.6f, rouge2: %.6f, rougeL: %.6f"%(rouge1, rouge2, rougeLsum))
 
 
-def test(dataloader, scorer, args, gpuid):
-    scorer.eval()
-    loss = 0
-    cnt = 0
-    rouge_scorer = RougeScorer(['rouge1', 'rouge2', 'rougeLsum'], use_stemmer=True)
-    rouge1, rouge2, rougeLsum = 0, 0, 0
-    with torch.no_grad():
-        for (i, batch) in enumerate(dataloader):
-            if args.cuda:
-                to_cuda(batch, gpuid)
-            samples = batch["data"]
-            output = scorer(batch["src_input_ids"], batch["candidate_ids"], batch["tgt_input_ids"])
-            similarity, gold_similarity = output['score'], output['summary_score']
-            similarity = similarity.cpu().numpy()
-            if i % 1000 == 0:
-                print(f"test similarity: {similarity[0]}")
-            max_ids = similarity.argmax(1)
-            for j in range(similarity.shape[0]):
-                cnt += 1
-                sample = samples[j]
-                sents = sample["candidates"][max_ids[j]][0]
-                score = rouge_scorer.score("\n".join(sample["abstract"]), "\n".join(sents))
-                rouge1 += score["rouge1"].fmeasure
-                rouge2 += score["rouge2"].fmeasure
-                rougeLsum += score["rougeLsum"].fmeasure
-    rouge1 = rouge1 / cnt
-    rouge2 = rouge2 / cnt
-    rougeLsum = rougeLsum / cnt
-    scorer.train()
-    loss = 1 - ((rouge1 + rouge2 + rougeLsum) / 3)
-    print(f"rouge-1: {rouge1}, rouge-2: {rouge2}, rouge-L: {rougeLsum}")
-    
-    if len(args.gpuid) > 1:
-        loss = torch.FloatTensor([loss]).to(gpuid)
-        dist.all_reduce(loss, op=dist.reduce_op.SUM)
-        loss = loss.item() / len(args.gpuid)
-    return loss
 
 
 def run(rank, args):
@@ -214,8 +177,7 @@ def run(rank, args):
             loss = loss / args.accumulate_step
             avg_loss += loss.item()
             loss.backward()
-            if step_cnt == args.accumulate_step:
-                # optimize step      
+            if step_cnt == args.accumulate_step:    
                 if args.grad_norm > 0:
                     nn.utils.clip_grad_norm_(scorer.parameters(), args.grad_norm)
                 step_cnt = 0
