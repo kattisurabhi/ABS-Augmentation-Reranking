@@ -152,7 +152,8 @@ def main():
     raw_datasets = load_dataset(args.dataset_name, args.dataset_config_name)
 
     num_beams = args.num_beams
-    model_path = args.ckpt_dir
+    path = '/home/data'
+    model_path = path + args.ckpt_dir
     num_return_sequences = args.num_return_sequences
     tokenizer = AutoTokenizer.from_pretrained(model_path)
 
