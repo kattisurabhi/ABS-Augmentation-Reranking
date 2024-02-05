@@ -37,7 +37,7 @@ class ReRanker(nn.Module):
         self.encoder = RobertaModel.from_pretrained(encoder)
         self.pad_token_id = pad_token_id
 
-    def forward(self, text_id, candidate_id, summary_id=None, require_gold=True):
+    def forward(self, text_id, candidate_id, summary_id=None, require_gold=False):
         
         batch_size = text_id.size(0)
         
