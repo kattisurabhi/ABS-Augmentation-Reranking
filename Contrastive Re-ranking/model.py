@@ -8,7 +8,6 @@ def RankingLoss(score, summary_score=None, margin=0, gold_margin=0, gold_weight=
     ones = torch.ones_like(score)
     loss_func = torch.nn.MarginRankingLoss(0.0)
     TotalLoss = loss_func(score, score, ones)
-    # candidate loss
     n = score.size(1)
     if not no_cand:
         for i in range(1, n):
